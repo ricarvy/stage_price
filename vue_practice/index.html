@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  <script type="application/shiny-singletons"></script>
+  <script type="application/html-dependencies">json2[2014.02.04];jquery[1.12.4];shiny[1.0.5];font-awesome[4.7.0];selectize[0.11.2];ionrangeslider[2.1.6];strftime[0.9.2];bootstrap-datepicker[1.6.4];detect-resize[0.5.3];jquery-ui[1.11.4];d3[3.5.2];vega[1.4.3];lodash[2.2.1];ggvis[0.4.3];shiny-ggvis[0.4.3];datatables[1.10.5];datatables-bootstrap[1.10.5];bootstrap[3.3.7]</script>
+<script src="shared/json2-min.js"></script>
+<script src="shared/jquery.min.js"></script>
+<link href="shared/shiny.css" rel="stylesheet" />
+
+<link href="shared/font-awesome/css/font-awesome.min.css" rel="stylesheet" />
+<link href="shared/selectize/css/selectize.bootstrap3.css" rel="stylesheet" />
+<!--[if lt IE 9]>
+<script src="shared/selectize/js/es5-shim.min.js"></script>
+<![endif]-->
+<script src="shared/selectize/js/selectize.min.js"></script>
+<link href="shared/ionrangeslider/css/ion.rangeSlider.css" rel="stylesheet" />
+<link href="shared/ionrangeslider/css/ion.rangeSlider.skinShiny.css" rel="stylesheet" />
+<script src="shared/ionrangeslider/js/ion.rangeSlider.min.js"></script>
+<script src="shared/strftime/strftime-min.js"></script>
+<link href="shared/datepicker/css/bootstrap-datepicker3.min.css" rel="stylesheet" />
+<script src="shared/datepicker/js/bootstrap-datepicker.min.js"></script>
+<script>
+(function() {
+  var datepicker = $.fn.datepicker.noConflict();
+  $.fn.bsDatepicker = datepicker;
+})();
+</script>
+<script src="detect-resize-0.5.3/jquery.resize.js"></script>
+<link href="jquery-ui-1.11.4/jquery-ui.min.css" rel="stylesheet" />
+<script src="jquery-ui-1.11.4/jquery-ui.min.js"></script>
+<script src="d3-3.5.2/d3.min.js"></script>
+<script src="vega-1.4.3/vega.min.js"></script>
+<script src="lodash-2.2.1/lodash.min.js"></script>
+<script>var lodash = _.noConflict();</script>
+<link href="ggvis-0.4.3/css/ggvis.css" rel="stylesheet" />
+<script src="ggvis-0.4.3/js/ggvis.js"></script>
+<script src="shared/datatables/js/jquery.dataTables.min.js"></script>
+<link href="shared/datatables/css/dataTables.bootstrap.css" rel="stylesheet" />
+<link href="shared/datatables/css/dataTables.extra.css" rel="stylesheet" />
+<script src="shared/datatables/js/dataTables.bootstrap.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="shared/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+<script src="shared/bootstrap/js/bootstrap.min.js"></script>
+<script src="shared/bootstrap/shim/html5shiv.min.js"></script>
+<script src="shared/bootstrap/shim/respond.min.js"></script>
+    <title>阶梯折扣生成系统</title>
+</head>
+
+<body>
+  <div class="container-fluid">
+    <h2>阶梯折扣生成系统</h2>
+    <div class="row">
+      <div class="col-sm-3">
+        <form class="well">
+          <p class="text-small">
+            <a href="http://1-------------" target="_blank">by BAS</a>
+            <a href="https://github.com/Viola1225" target="_blank">
+              <i class="fa fa-github"></i>
+            </a>
+             |
+          </p>
+          <hr/>
+          <p class="text-small">请选择客户属性及期望折扣类型: </p>
+            <div id="prepaid" class="form-group shiny-input-radiogroup shiny-input-container">
+                <label class="control-label" for="prepaid">是否为新客户:</label>
+                <div class="shiny-options-group">
+                    <div class="radio">
+                        <label>
+                            <input type="radio" name="prepaid" value="False" checked="checked"/>
+                            <span>否</span>
+                        </label>
+                    </div>
+                    <div class="radio">
+                        <label>
+                            <input type="radio" name="prepaid" value="True"/>
+                            <span>是</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div id="tou" class="form-group shiny-input-radiogroup shiny-input-container">
+                <label class="control-label" for="tou">是否特殊通道:</label>
+                <div class="shiny-options-group">
+                    <div class="radio">
+                        <label>
+                            <input type="radio" name="tou" value="FALSE" checked="checked"/>
+                            <span>否</span>
+                        </label>
+                    </div>
+                    <div class="radio">
+                        <label>
+                            <input type="radio" name="tou" value="TRUE"/>
+                            <span>是</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div id="rate_type" class="form-group shiny-input-checkboxgroup shiny-input-container">
+                <label class="control-label" for="rate_type">是否有淡旺季:</label>
+                <div class="shiny-options-group">
+                    <div class="radio">
+                        <label>
+                            <input type="radio"value="False" checked="checked"/>
+                            <span>淡旺季</span>
+                        </label>
+                    </div>
+                    <div class="radio">
+                        <label>
+                            <input type="radio" value="True"/>
+                            <span>普通</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group shiny-input-container">
+                <label class="control-label" for="usage">所属大区: </label>
+                <div>
+                    <select id="area" width="100">
+                        <option value="华中">华中</option>
+                        <option value="华南" selected>华南</option>
+                        <option value="华北">华北</option>
+                    </select>
+                    <script type="application/json" data-for="usage" data-nonempty="">{}</script>
+                </div>
+            </div>
+            <div class="form-group shiny-input-container">
+            <label class="control-label" for="tdu">客户所属行业: </label>
+            <div>
+              <select id="tdu">
+                    <option value="电子电器" selected>电子电器</option>
+                    <option value="服装鞋帽">服装鞋帽</option>
+                    <option value="机具仪器">机具仪器</option>
+                    <option value="快消品">快消品</option>
+                    <option value="文化娱乐">文化娱乐</option>
+                    <option value="其他">其他</option></select>
+              <script type="application/json" data-for="tdu" data-nonempty="">{}</script>
+            </div>
+          </div>
+          <div class="form-group shiny-input-container">
+            <label class="control-label" for="usage">建议产品类型: </label>
+            <div>
+              <select id="usage">
+                    <option value="重货">重货</option>
+                    <option value="时效">时效</option>
+                    <option value="冷运">冷运</option>
+                    <option value="国际件">国际件</option>
+                    <option value="电商">电商</option>
+                    <option value="特惠">特惠</option></select>
+              <script type="application/json" data-for="usage" data-nonempty="">{}</script>
+            </div>
+          </div>
+            <hr />
+          <div class="form-group shiny-input-container">
+              <label for="amount">签约时长：</label>
+              <input id="amount" type="number" class="form-control" value="12" min="3" max="24" step="3"/>
+              <div id="slider-range"></div>
+          </div>
+          <div class="shiny-input-container">
+            <label for="num">建议折扣阶数：</label>
+            <input id="num" type="number" class="form-control" value="3" min="1" max="10"/>
+              <div id="stage_inputs" class="advised_discount_stage"></div>
+          </div>
+          <hr/>
+          <div id="dates" class="shiny-date-range-input form-group shiny-input-container">
+            <label class="control-label" for="dates">参考折扣历史</label>
+            <div class="input-daterange input-group">
+              <input type="date"/>
+              <span > to </span>
+              <input type="date"/>
+            </div>
+          </div>
+          <hr/>
+          <button id="action" type="button" class="btn btn-default action-button">提交</button>
+        </form>
+      </div>
+      <div class="col-sm-9">
+        <div class="tabbable">
+          <ul class="nav nav-tabs" data-tabsetid="1521">
+            <li class="active">
+              <a href="#tab-1521-1" data-toggle="tab" data-value="阶梯折扣生成">阶梯折扣生成</a>
+            </li>
+            <li>
+              <a href="#tab-1521-2" data-toggle="tab" data-value="历史纪录">历史纪录</a>
+            </li>
+            <li>
+              <a href="#tab-1521-3" data-toggle="tab" data-value="数据查看">数据查看</a>
+            </li>
+          </ul>
+          <div class="tab-content" data-tabsetid="1521">
+            <div class="tab-pane active" data-value="阶梯折扣生成" id="tab-1521-1">
+              <h3>折扣方案：</h3>
+              <p class="text-small">根据左侧选择的客户特征及要求生成的阶梯折扣方案如下，
+                    该方案基于过去同类型客户签约折扣的历史数据生成：</p>
+              <hr/>
+              <h3>方案描述</h3>
+              <div id="rankingSummary">
+                  <table border="0" align="center" width="600">
+                      <tr>
+                          <th>阶梯</th>
+                          <th>折扣</th>
+                      </tr>
+                      <tr>
+                          <td>0 - 10W</td>
+                          <td>0.05</td>
+                      </tr>
+                      <tr>
+                          <td>10 - 20W</td>
+                          <td>0.1</td>
+                      </tr>
+                      <tr>
+                          <td>20 - 100W</td>
+                          <td>0.15</td>
+                      </tr>
+                  </table>
+              </div>
+              <hr/>
+            </div>
+            <div class="tab-pane" data-value="历史纪录" id="tab-1521-2">
+              <h3>同类客户历史签约折扣情况：</h3>
+              <p class="text-small">根据左侧选择的客户特征，相似客户在（2016年1月~2018年7月）
+                   的折扣方案最小值，最大值，中位数如下：</p>
+                <table border="0" align="center" width="600">
+                    <tr>
+                        <th>最大值</th>
+                        <td>0.15</td>
+                    </tr>
+                    <tr>
+                        <th>最小值</th>
+                        <td>0.02</td>
+                    </tr>
+                    <tr>
+                        <th>中位数</th>
+                        <td>0.15</td>
+                    </tr>
+                </table>
+
+                <hr/>
+              <p class="text-small">若该客户为老客户，其在（2016年1月~2018年7月）
+                   的已签约折扣方案如下：</p>
+                <table border="0" align="center" width="600">
+                    <tr>
+                        <th>阶梯</th>
+                        <th>折扣</th>
+                    </tr>
+                    <tr>
+                        <td>0 - 10W</td>
+                        <td>0.05</td>
+                    </tr>
+                    <tr>
+                        <td>10 - 20W</td>
+                        <td>0.1</td>
+                    </tr>
+                    <tr>
+                        <td>20 - 100W</td>
+                        <td>0.15</td>
+                    </tr>
+                </table>
+              <hr/>
+            </div>
+            <div class="tab-pane" data-value="数据查看" id="tab-1521-3">
+              <h3>历史数据</h3>
+              <p class="text-small">
+                同类客户的历史数据，数据来自2016年1月至2018年6月的签约客户运单级数据
+                <a href="http://www.powertochoose.org" target="_blank">www.powertochoose.org</a>
+              </p>
+              <hr/>
+              <h3>Datatable</h3>
+              <div id="datatable" class="shiny-datatable-output"></div>
+              <hr/>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- jquery -->
+  <script type="text/javascript" src="js/index.js"></script>
+
+</body>
+
+</html>
